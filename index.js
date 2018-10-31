@@ -22,7 +22,7 @@ server= express()
   .use(express.static(__dirname + '/public'))
   .use(bodyParser.urlencoded({ extended: true }))
   .use(bodyParser.json())
-  .get('/', function(req, res){  res.sendFile(__dirname + '/admin.html')})
+  .get('/', function(req, res){  res.sendFile(__dirname + '/login.html')})
   .get('/login', function(req, res){  res.sendFile(__dirname + '/login.html')})
   .get('/register', function(req, res){  res.sendFile(__dirname + '/register.html')})
   .get('/getNewPosts',function(req,res){
@@ -35,23 +35,7 @@ server= express()
   .post('/customPost',function(req,res){
     var id = req.body.id;
     var op = req.body.op;
-    if(op==1){
-      if(ShowPosts.length==12){
-        ShowPosts.shift();
-        console.log("limitar 12")
-      }
-    }
-
-    for(var i=0;i<posts.length;i++){
-      if(id==posts[i].id){
-        if(op==1)
-          ShowPosts.push(posts[i]);
-        else
-           RemovePosts(id)
-        posts[i].estado=op;
-        break;
-      }
-    }
+    customPost(id,op)
     sendToClients(ShowPosts)
     res.json(ShowPosts)
   })
@@ -62,7 +46,7 @@ server= express()
              if(user ===null){
                res.end("Login invalid");
             }else if (user.name === req.body.name && user.pass === req.body.pass){
-            res.sendFile(__dirname + '/index.html')
+            res.sendFile(__dirname + '/admin.html')
           } else {
             console.log("Credentials wrong");
             res.end("Login invalid");
@@ -97,6 +81,27 @@ server= express()
 	    ConsumeInstagramApi()
   }, 120000);
 
+
+
+function customPost(id,op){
+  if(op==1){
+    if(ShowPosts.length==12){
+      ShowPosts.shift();
+      console.log("limitar 12")
+    }
+  }
+
+  for(var i=0;i<posts.length;i++){
+    if(id==posts[i].id){
+      if(op==1)
+        ShowPosts.push(posts[i]);
+      else
+         RemovePosts(id)
+      posts[i].estado=op;
+      break;
+    }
+  }
+}
 
 function getOldNewPosts(){
   newPosts = []
