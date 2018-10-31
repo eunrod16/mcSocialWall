@@ -19,6 +19,14 @@
   <!-- CSS Just for demo purpose, don't include it in your project -->
   <link href="../assets/demo/demo.css" rel="stylesheet" />
 </head>
+<style>
+  .hide{
+    opacity: 0.5;
+  }
+  .show{
+    opacity: 1;
+  }
+</style>
 
 <body class="">
   <div class="wrapper ">
@@ -48,45 +56,9 @@
             </a>
           </li>
           <li>
-            <a href="./icons.html">
-              <i class="nc-icon nc-diamond"></i>
-              <p>Icons</p>
-            </a>
-          </li>
-          <li>
-            <a href="./map.html">
-              <i class="nc-icon nc-pin-3"></i>
-              <p>Maps</p>
-            </a>
-          </li>
-          <li>
-            <a href="./notifications.html">
-              <i class="nc-icon nc-bell-55"></i>
-              <p>Notifications</p>
-            </a>
-          </li>
-          <li>
-            <a href="./user.html">
-              <i class="nc-icon nc-single-02"></i>
-              <p>User Profile</p>
-            </a>
-          </li>
-          <li>
             <a href="./tables.html">
               <i class="nc-icon nc-tile-56"></i>
               <p>Table List</p>
-            </a>
-          </li>
-          <li>
-            <a href="./typography.html">
-              <i class="nc-icon nc-caps-small"></i>
-              <p>Typography</p>
-            </a>
-          </li>
-          <li class="active-pro">
-            <a href="./upgrade.html">
-              <i class="nc-icon nc-spaceship"></i>
-              <p>Upgrade to PRO</p>
             </a>
           </li>
         </ul>
@@ -165,23 +137,9 @@
 </div> -->
       <div class="content">
 
-	            
-		<div class="">
-    <div class="card flex-row flex-wrap">
-        <div class="card-header border-0">
-            <img src="//placehold.it/200" alt="">
-        </div>
-        <div class="card-block px-2">
-            <h4 class="card-title">Title</h4>
-            <p class="card-text">Description</p>
-            <a href="#" class="btn btn-primary">BUTTON</a>
-        </div>
-        <div class="w-100"></div>
-        <div class="card-footer w-100 text-muted">
-            Footer stating cats are CUTE little animals
-        </div>
-    </div>
-    <br>
+
+		<div id="posts">
+
 
 </div>
 
@@ -232,10 +190,74 @@
   <script src="../assets/js/paper-dashboard.min.js?v=2.0.0" type="text/javascript"></script>
   <!-- Paper Dashboard DEMO methods, don't include it in your project! -->
   <script src="../assets/demo/demo.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
   <script>
     $(document).ready(function() {
       // Javascript method's body can be found in assets/assets-for-demo/js/demo.js
-      demo.initChartsPages();
+      //demo.initChartsPages();
+      setInterval(() => {
+          CallServer('/getNewPosts')
+      }, 150000);
+      CallServer('/getAllPosts')
+      $(document).on('click', '.btn-show-hide', function () {
+        var id = $(this).data("id");
+        var op;
+        if($(this).hasClass("nc-simple-add")){
+          $( ".show-hide"+id ).removeClass( "hide" )
+          $( ".show-hide"+id ).addClass( "show" )
+          $(this).removeClass("nc-simple-add")
+          $(this).addClass("nc-simple-delete")
+          op=1;
+        }
+        else{
+          $( ".show-hide"+id ).addClass( "hide" )
+          $( ".show-hide"+id ).removeClass( "show" )
+          $(this).addClass("nc-simple-add")
+          $(this).removeClass("nc-simple-delete")
+          op=0;
+        }
+        $.ajax({
+            type : 'POST',
+            url : '/customPost',
+            data : {
+              id:id,
+              op:op
+            },
+            success: function(data){
+              console.log("Posts",data);
+            }
+          });
+
+      });
+      function CallServer(url){
+        $.ajax({
+            type : 'GET',
+            url : url,
+            data : null,
+            success: function(data){
+              console.log("Posts",url,data);
+              data.forEach(function(element) {
+                $('#posts').prepend(`
+                   <div class="card flex-row flex-wrap">
+                        <div class="col-lg-3 col-md-4 col-sm-6 card-header border-0 show-hide`+element.id+(element.estado==1?" show":" hide")+`">
+                            <img src="`+element.img+`" width=200px height=200px alt="">
+                        </div>
+                        <div class="col-lg-9 col-md-8 col-sm-6 card-block px-2">
+                            <h4 class="card-title show-hide`+element.id+(element.estado==1?" show":" hide")+`">`+element.user+`</h4>
+                            <p class="card-text show-hide`+element.id+(element.estado==1?" show":" hide")+`">`+element.text+`</p>
+                            <button class="btn btn-success btn-show-hide nc-icon `+(element.estado==1?"nc-simple-delete":"nc-simple-add")+` " data-id=`+element.id+` ></button>
+                        </div>
+                        <div class="w-100"></div>
+                        <div class="card-footer w-100 text-muted">
+
+                        </div>
+                    </div>
+                    <br>`)
+              });
+
+            }
+          });
+      }
     });
   </script>
 </body>
