@@ -36,7 +36,7 @@ server= express()
     var id = req.body.id;
     var op = req.body.op;
     customPost(id,op)
-    sendToClients(ShowPosts)
+    if(ShowPosts.length>=10)sendToClients(ShowPosts)
     res.json(ShowPosts)
   })
   .post('/login',urlencodedParser,function(req,res){
