@@ -184,7 +184,7 @@ function pushPosts(post){
 }
 
 function ConsumeInstagramApi(){
-   request('https://www.instagram.com/explore/tags/mcdiafeliz/?__a=1', function (error, response, body) {
+   request('https://www.instagram.com/explore/tags/mcdiafeliz2018/?__a=1', function (error, response, body) {
      if(body){
        if(!error){
          var publicaciones = JSON.parse(body);
