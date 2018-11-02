@@ -22,7 +22,7 @@ server= express()
   .use(express.static(__dirname + '/public'))
   .use(bodyParser.urlencoded({ extended: true }))
   .use(bodyParser.json())
-  .get('/', function(req, res){  res.sendFile(__dirname + '/admin.html')})
+  .get('/', function(req, res){  res.sendFile(__dirname + '/login.html')})
   .get('/login', function(req, res){  res.sendFile(__dirname + '/login.html')})
   .get('/register', function(req, res){  res.sendFile(__dirname + '/register.html')})
   .get('/getNewPosts',function(req,res){
