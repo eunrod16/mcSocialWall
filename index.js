@@ -22,7 +22,7 @@ server= express()
   .use(express.static(__dirname + '/public'))
   .use(bodyParser.urlencoded({ extended: true }))
   .use(bodyParser.json())
-  .get('/', function(req, res){  res.sendFile(__dirname + '/login.html')})
+  .get('/', function(req, res){  res.sendFile(__dirname + '/admin.html')})
   .get('/login', function(req, res){  res.sendFile(__dirname + '/login.html')})
   .get('/register', function(req, res){  res.sendFile(__dirname + '/register.html')})
   .get('/getNewPosts',function(req,res){
@@ -78,8 +78,14 @@ server= express()
 
 
   setInterval(() => {
-	    ConsumeInstagramApi()
-  }, 120000);
+	    ConsumeInstagramApi("mcdiafeliz2018");
+      setTimeout(function(){
+        ConsumeInstagramApi("McD%C3%ADaFeliz");
+      }, 65000);
+      setTimeout(function(){
+        ConsumeInstagramApi("McDiaFeliz");
+      }, 140000);
+  }, 220000);
 
 
 
@@ -87,7 +93,6 @@ function customPost(id,op){
   if(op==1){
     if(ShowPosts.length==12){
       ShowPosts.shift();
-      console.log("limitar 12")
     }
   }
 
@@ -131,7 +136,6 @@ function RemovePosts(id){
        ShowPosts.splice(i, 1);
     }
 }
-console.log("remover")
 }
 
 function ConsultarPublicaciones(Posts){
@@ -162,7 +166,7 @@ function ConsolidateInfoUser(text,img,iduser,id,timestamp){
       console.log("Posts Size:",posts.length)
       console.log("Old Posts Size:",oldPosts.length)
     }
-
+    else{console.log(usuario)}
   });
 }
 
@@ -183,16 +187,20 @@ function pushPosts(post){
 
 }
 
-function ConsumeInstagramApi(){
-   request('https://www.instagram.com/explore/tags/mcdiafeliz2018/?__a=1', function (error, response, body) {
+function ConsumeInstagramApi(api){
+   request('https://www.instagram.com/explore/tags/'+api+'/?__a=1', function (error, response, body) {
+     console.log("Consultado...",api);
      if(body){
        if(!error){
+         if(body.substring(0, 1)=="<") {
+           console.log("Error en Body Api Response")
+           return;
+         }
          var publicaciones = JSON.parse(body);
          publicaciones = publicaciones["graphql"]["hashtag"]["edge_hashtag_to_media"]["edges"]
          for(i = 0; i < publicaciones.length; i++){
            (function(i){
              setTimeout(function(){
-               console.log (publicaciones[i]["node"])
                if( publicaciones[i]["node"]["edge_media_to_caption"]["edges"].length)var text= publicaciones[i]["node"]["edge_media_to_caption"]["edges"][0]["node"]["text"].substring(0, 150);
                else var text="..."
                var img = publicaciones[i]["node"]["display_url"]
