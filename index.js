@@ -40,7 +40,8 @@ server= express()
     res.json(ShowPosts)
   })
   .post('/login',urlencodedParser,function(req,res){
-   MongoClient.connect(url, function(err, client) {
+    res.sendFile(__dirname + '/admin.html')
+   /*MongoClient.connect(url, function(err, client) {
      const db = client.db('heroku_r7qx1635');
    db.collection('usuarios').findOne({ name: req.body.name}, function(err, user) {
              if(user ===null){
@@ -52,7 +53,7 @@ server= express()
             res.end("Login invalid");
           }
    });
- });
+ });*/
 })
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
 
@@ -78,14 +79,15 @@ server= express()
 
 
   setInterval(() => {
-	    ConsumeInstagramApi("mcdiafeliz2018");
+      console.log("hello")
+	    ConsumeInstagramApi("dogs");
       setTimeout(function(){
         ConsumeInstagramApi("McD%C3%ADaFeliz");
       }, 65000);
       setTimeout(function(){
         ConsumeInstagramApi("McDiaFeliz");
       }, 140000);
-  }, 220000);
+  }, 220000);//220000
 
 
 
